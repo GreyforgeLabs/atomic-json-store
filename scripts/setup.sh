@@ -16,39 +16,30 @@ check_command() {
     fi
 }
 
-# Uncomment and modify as needed:
-# check_command python3
-# check_command node
-# check_command cargo
+check_command python3
 
-# Install dependencies
-# Uncomment the relevant section:
-
-# Python:
-# cd "$PROJECT_DIR"
-# python3 -m venv .venv
-# source .venv/bin/activate
-# pip install -r requirements.txt
-
-# Node.js:
-# cd "$PROJECT_DIR"
-# npm install
-
-# Rust:
-# cd "$PROJECT_DIR"
-# cargo build
-
-# Setup environment
-if [ ! -f "$PROJECT_DIR/.env" ] && [ -f "$PROJECT_DIR/.env.example" ]; then
-    cp "$PROJECT_DIR/.env.example" "$PROJECT_DIR/.env"
-    echo "Created .env from .env.example - edit with your values."
+PYTHON_OK="$(python3 -c 'import sys; print(int(sys.version_info >= (3, 11)))')"
+if [ "$PYTHON_OK" != "1" ]; then
+    echo "ERROR: Python 3.11 or newer is required (found $(python3 --version))."
+    exit 1
 fi
+
+cd "$PROJECT_DIR"
+
+if [ ! -d .venv ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv .venv
+fi
+
+# shellcheck disable=SC1091
+source .venv/bin/activate
+
+python -m pip install --quiet --upgrade pip
+python -m pip install --quiet -e ".[dev]"
 
 echo "=== Setup complete ==="
 
-# Verification
-# Uncomment and modify:
-# echo "Running verification..."
-# python3 -c "import atomic-json-store; print('OK')"
-# npm test
-# cargo test
+echo "Running verification..."
+atomic-json-store --version
+python -m pytest -q
+echo "OK: atomic-json-store is installed in .venv and the test suite passes."

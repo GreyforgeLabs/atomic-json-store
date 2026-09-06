@@ -38,3 +38,9 @@ Thumbs.db
 *.o
 *.so
 *.dylib
+
+# Store sidecars from local experiments
+*.json.lock
+*.corrupt-*
+.ruff_cache/
+.pytest_cache/
