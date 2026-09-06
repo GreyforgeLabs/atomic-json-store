@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Uncomment the setup step for your language:
+
+      # Python:
+      # - uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
+      # - run: pip install -r requirements.txt
+      # - run: python -m pytest
+
+      # Node.js:
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: "22"
+      # - run: npm ci
+      # - run: npm test
+
+      # Rust:
+      # - uses: dtolnay/rust-toolchain@stable
+      # - run: cargo test
+
+      - run: echo "Configure CI for this project"
