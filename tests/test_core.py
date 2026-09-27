@@ -309,6 +309,20 @@ def test_info_reports_metadata_without_migrating(store_path):
     assert read_envelope(store_path)["schema_version"] == 1
 
 
+def test_info_does_not_create_parent_or_lock(tmp_path):
+    path = tmp_path / "uncreated" / "state.json"
+    info = AtomicJsonStore(path).info()
+    assert not info.exists
+    assert not path.parent.exists()
+
+    path.parent.mkdir()
+    AtomicJsonStore(path).save({"ready": True})
+    lock_path = path.with_name(path.name + ".lock")
+    lock_path.unlink()
+    assert AtomicJsonStore(path).info().exists
+    assert not lock_path.exists()
+
+
 def test_info_on_corrupt_file(store_path):
     store_path.write_text("nope", encoding="utf-8")
     info = AtomicJsonStore(store_path).info()

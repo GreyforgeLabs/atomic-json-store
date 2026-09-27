@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-09-27
+
+### Fixed
+
+- `info()` now reads an atomically published generation without creating a parent directory or sidecar lock.
+- Document the CLI's dotted-path key limitation and the direct Python API for literal dots.
+
 ## [1.0.0] - 2026-09-06
 
 ### Added

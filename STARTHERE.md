@@ -13,6 +13,8 @@ git clone https://github.com/GreyforgeLabs/atomic-json-store.git && cd atomic-js
 
 Atomic, cross-process locked, schema-versioned JSON persistence for Python. One class (`AtomicJsonStore`) writes documents through temp-file-plus-rename, serializes read-modify-write cycles with an advisory sidecar lock, and upgrades old files through registered migrations. Standard library only.
 
+`info()` reads a complete atomically published file without creating a directory or lock. CLI dotted key paths have no escape syntax; use the Python API for keys containing a literal dot.
+
 ## Project Structure
 
 ```text

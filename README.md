@@ -147,6 +147,8 @@ atomic-json-store state.json info
 
 Exit codes: `0` success, `1` store or I/O error, `2` usage error (including invalid `--json` values), `3` key path not found. The CLI operates at whatever schema version the file already carries, so it never triggers a migration.
 
+CLI key paths use `.` as a separator and have no escape syntax. To work with object keys that contain a literal dot, use `dump` and the Python API (`load`/`save` or `update`) on the complete document. `info` is read-only and creates neither a missing parent directory nor a lock file.
+
 ## File Format
 
 ```json

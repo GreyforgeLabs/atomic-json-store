@@ -236,27 +236,28 @@ class AtomicJsonStore:
 
     def info(self) -> StoreInfo:
         """Read envelope metadata. Never migrates, never writes."""
-        with self._lock.held(exclusive=False):
-            try:
-                raw = self._path.read_bytes()
-            except FileNotFoundError:
-                return StoreInfo(self._path, False, None, None, None, 0)
-            try:
-                document = json.loads(raw, cls=self._decoder)
-            except ValueError:
-                return StoreInfo(self._path, True, None, None, None, len(raw))
-            if not self._is_envelope(document):
-                return StoreInfo(self._path, True, None, LEGACY_VERSION, None, len(raw))
-            version = document.get("schema_version")
-            updated = document.get("updated_at")
-            return StoreInfo(
-                self._path,
-                True,
-                FORMAT,
-                version if self._valid_version(version) else None,
-                updated if isinstance(updated, str) else None,
-                len(raw),
-            )
+        # Writers replace the whole file atomically, so an opened descriptor sees
+        # one complete generation without creating the sidecar lock or parent.
+        try:
+            raw = self._path.read_bytes()
+        except FileNotFoundError:
+            return StoreInfo(self._path, False, None, None, None, 0)
+        try:
+            document = json.loads(raw, cls=self._decoder)
+        except ValueError:
+            return StoreInfo(self._path, True, None, None, None, len(raw))
+        if not self._is_envelope(document):
+            return StoreInfo(self._path, True, None, LEGACY_VERSION, None, len(raw))
+        version = document.get("schema_version")
+        updated = document.get("updated_at")
+        return StoreInfo(
+            self._path,
+            True,
+            FORMAT,
+            version if self._valid_version(version) else None,
+            updated if isinstance(updated, str) else None,
+            len(raw),
+        )
 
     # ── Read / write ─────────────────────────────────────────────────────
 
